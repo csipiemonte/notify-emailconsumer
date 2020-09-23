@@ -1,0 +1,2 @@
+cd /appserv/unp/notify/emailconsumer/src
+node emailconsumer.js >/dev/null 2>&1 &
