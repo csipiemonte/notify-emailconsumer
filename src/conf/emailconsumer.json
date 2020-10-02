@@ -1,4 +1,6 @@
 {
-    "app_name": "emailconsumer"
-
+    "app_name": "emailconsumer",
+    "log4js": {
+        "pm2": true
+    }
 }

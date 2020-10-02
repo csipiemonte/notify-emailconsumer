@@ -11,9 +11,6 @@ const utility = obj.utility();
 const util = require("util");
 var ical = require('ical-generator');
 
-//var fs = require('fs');
-
-
 var nodemailer = require('nodemailer');
 const request = require('request-promise');
 
@@ -67,7 +64,7 @@ async function getTemplate()
         templates = await request(options);
         logger.info("templates: ",Object.keys(templates))
     } catch (e) {
-        logger.error("error getting template: ", e);
+        logger.error("error getting template: ", e.message);
         setTimeout(getTemplate,5000);
     }
 }
@@ -96,7 +93,7 @@ function checkEmail(payloadMessage) {
         return res;
     }
 
-    if (!payloadMessage.id) res.push("id field is mandatory");//payloadMessage.id = Utility.uuid();
+    if (!payloadMessage.id) res.push("id field is mandatory");
     if (!payloadMessage.user_id) res.push("user_id is mandatory");
     if (!payloadMessage.email) res.push("email is mandatory");
     if (!utility.checkNested(payloadMessage,"email.subject")) res.push("email subject is mandatory");
@@ -122,22 +119,13 @@ async function sendMail(body,preferences){
         message: message
     }));
 
-    /*let event = cal.createEvent({
-        start: '2019-03-07 15:28:00',
-        end: '2019-03-07 16:28:00',
-        summary: "so mario",
-        description: "descrizione",
-        location: "location"
-    });
-    */
-
     let cal;
     if(body.payload.memo){
         cal = ical();
         try{
           cal.createEvent(body.payload.memo);
         }catch(e){
-          logger.error("error creating memo event: ",e);
+          logger.error("error creating memo event: ", e.message);
           let error = {};
           error.type_error = "client_error";
           error.error = e.message;
@@ -177,17 +165,6 @@ async function sendMail(body,preferences){
         logger.info("email sent");
     }catch(err){
         throw err;
-        /*
-        if(err.responseCode === 550) {
-            logger.error("ERROR sending email:",err);
-            if(eh) eh.system_error("Error", JSON.stringify({
-                user: body.user,
-                message: body.payload,
-                error:err
-            }));
-        }else{
-            throw err;
-        }*/
     }
 }
 
