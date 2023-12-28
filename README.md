@@ -1,10 +1,14 @@
 ## Descrizione
 
-Consumer di notifiche push tramite email per il progetto Notify (Piattaforma di notifica regionale).
+Componente Email Consumer per il progetto Notify (Piattaforma di notifica regionale). Si occupa di inviare le email, inviate dai vari servizi, agli utenti secondo le preferenze impostate dagli stessi.
+
+## Configurazione
+
+Per una corretta configurazione della componente vedere il file **README.md** presente nella cartella *docs*.
 
 ## Installazione
 
-* Compilare i sorgenti utilizzando [apache ant](https://ant.apache.org/), viene generato un file .tar (es: _emailconsumersrv-2.0.1.tar_)
-* Estrarre il file .tar nella directory `/appserv/unp/notify/emailconsumer`
+* Clonare il repository in una cartella. (Il modulo dipende dalla componente [notify-commons](https://github.com/csipiemonte/notify-commons), pertanto nella cartella deve essere presente tale componente)
+* Posizionarsi nella cartella del repository: `cd notify-emailconsumer`
 * Eseguire il comando `npm install` per installare le dipendenze
-* Eseguire lo script `emailconsumer`
+* Eseguire lo script `./emailconsumer` per avviare la componente
