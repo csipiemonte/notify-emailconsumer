@@ -2,7 +2,7 @@
   "name": "jobs",
   "version": "1.0.0",
   "description": "",
-  "main": "emailconsumer.js",
+  "main": "index.js",
   "scripts": {
     "start": "cd src && node emailconsumer.js"
   },
