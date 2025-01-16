@@ -1,7 +1,5 @@
 var commons = require("../../commons/src/commons");
-console.log(JSON.stringify(process.env, null, 4));
 const conf = commons.merge(require('./conf/emailconsumer'), require('./conf/emailconsumer-' + (process.env.ENVIRONMENT || 'localhost')));
-console.log(JSON.stringify(conf, null, 4));
 const obj = commons.obj(conf);
 
 const logger = obj.logger();
@@ -9,21 +7,17 @@ const eh = obj.event_handler();
 const utility = obj.utility();
 
 const util = require("util");
-var ical = require('ical-generator');
+const { default: ical } = require('ical-generator');
 
 var nodemailer = require('nodemailer');
 const request = require('request-promise');
-
-var transporter = nodemailer.createTransport(conf.email_server);
-
-transporter.sendMail = util.promisify(transporter.sendMail);
 
 var templates = {};
 
 async function getTemplate()
 {
     try {
-        logger.debug("get templates from mb: ",conf.mb.queues.keys);
+        logger.debug("get templates from mb: ", conf.mb.queues.keys);
         let options = {
             url: conf.mb.queues.keys,
             method: 'GET',
@@ -42,12 +36,13 @@ async function getTemplate()
 }
 
 getTemplate();
+setInterval(getTemplate, 600 * 1000);
 
 function compile(body) {
     let message = body.payload;
 
-    if(!message.email.template_id) throw {client_source:"emailconsumer",client_message:"template_id was not defined in message"};
-    if(!templates[message.email.template_id]) throw {client_source:"emailconsumer",client_message:"this template_id doesn't exist"};
+    if(!message.email.template_id) throw {client_source:"emailconsumer", client_message:"template_id was not defined in message"};
+    if(!templates[message.email.template_id]) throw {client_source:"emailconsumer", client_message:"this template_id doesn't exist"};
 
     let template = Buffer.from(templates[message.email.template_id], 'base64').toString();
     return template.replace("{{body}}", message.email.body);
@@ -73,30 +68,31 @@ function checkEmail(payloadMessage) {
     return res;
 }
 
-
-
-function checkTo(payload){
-    return  payload.email.to
+function checkTo(payload) {
+    return  payload.email.to;
 }
 
-async function sendMail(body,preferences){
-
-    var message = {};
-    message.id = body.payload.id;
-    message.bulk_id = body.payload.bulk_id;
-    message.user_id = body.payload.user_id;
-    message.tag = body.payload.tag;
-    message.correlation_id = body.payload.correlation_id;
-    await eh.info("trying to send email",JSON.stringify({
+async function sendMail(body, preferences) {
+    var message = {
+        id: body.payload.id,
+        bulk_id: body.payload.bulk_id,
+        user_id: body.payload.user_id,
+        tag: body.payload.tag,
+        correlation_id: body.payload.correlation_id,
+        tenant: body.user.tenant ? body.user.tenant : conf.defaulttenant
+    }
+    
+    eh.info("trying to send email", JSON.stringify({
         message: message
     }));
+    logger.debug("trying to send email");
 
     let cal;
-    if(body.payload.memo){
+    if(body.payload.memo) {
         cal = ical();
-        try{
+        try {
           cal.createEvent(body.payload.memo);
-        }catch(e){
+        } catch(e) {
           logger.error("error creating memo event: ", e.message);
           let error = {};
           error.type_error = "client_error";
@@ -106,14 +102,12 @@ async function sendMail(body,preferences){
         }
     }
 
-
-
-    logger.debug("trying to send email");
-    try{
+    try {
         var template = compile(body);
-    }catch(e){
+    } catch(e) {
         throw e;
     }
+
     let mailOptions = {
         from: body.user.preferences.email,
         to: preferences.body.email,
@@ -121,25 +115,42 @@ async function sendMail(body,preferences){
         html: template,
     };
 
-
     if(cal) mailOptions.alternatives= [{
         contentType: "text/calendar",
-        content: new Buffer(cal.toString())
+        content: Buffer.from(cal.toString())
     }]
 
-    try{
+    try {
+        let mailTransport;
+
+        if(body.user.preferences.email_username && body.user.preferences.email_password) {
+            mailTransport = {
+                host: conf.authenticated_email_server.host,
+                port: conf.authenticated_email_server.port,
+                secure: false, // upgrade later with STARTTLS
+                auth: {
+                  user: body.user.preferences.email_username,
+                  pass: body.user.preferences.email_password,
+                },
+            };    
+        } else {
+            mailTransport = conf.email_server;
+        }
+        let transporter = nodemailer.createTransport(mailTransport);
+        transporter.sendMail = util.promisify(transporter.sendMail);
         await transporter.sendMail(mailOptions);
         await transporter.close();
-        await eh.ok("email sent",JSON.stringify({
+        
+        eh.ok("email sent",JSON.stringify({
             sender: body.user.preference_service_name,
-            message:message
+            message: message
         }));
         logger.info("email sent");
-    }catch(err){
+    } catch(err) {
         throw err;
     }
 }
 
-logger.debug(JSON.stringify(process.env, null, 4));
-logger.debug(JSON.stringify(conf, null, 4));
-obj.consumer("email", checkEmail, checkTo,sendMail)();
+logger.info("environment:", JSON.stringify(process.env, null, 4));
+logger.info("configuration:", JSON.stringify(conf, null, 4));
+obj.consumer("email", checkEmail, checkTo, sendMail)();

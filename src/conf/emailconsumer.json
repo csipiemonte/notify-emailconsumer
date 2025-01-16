@@ -2,5 +2,6 @@
     "app_name": "emailconsumer",
     "log4js": {
         "pm2": true
-    }
+    },
+    "defaulttenant": "r_piemon"
 }

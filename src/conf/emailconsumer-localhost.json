@@ -18,17 +18,26 @@
   "mb": {
     "queues": {
       "messages": "http://localhost:8080/api/v1/queues/messages:email",
+      "retry": "http://localhost:8080/api/v1/queues/messages:email:to_be_retried",
       "events": "http://localhost:8080/api/v1/topics/events",
       "keys": "http://localhost:8080/api/v1/keys/template:email"
     },
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1dWlkIjoiMzI2ZDQxOTgtNjY3OS00MTA5LTliNzktNDQxZmM2OTgzMDVlIiwicHJlZmVyZW5jZV9zZXJ2aWNlX25hbWUiOiJlbWFpbGNvbnN1bWVyIiwiZXhwIjoyNTM0MDIyMTA4MDAsImlhdCI6MTUxOTgyMjcwNCwiYXBwbGljYXRpb25zIjp7Im1iIjpbImVucXVldWUiLCJkZXF1ZXVlIl0sInByZWZlcmVuY2VzIjpbInJlYWQiLCJ3cml0ZSIsImFkbWluIl0sIm1leCI6WyJyZWFkIiwid3JpdGUiLCJhZG1pbiJdfX0.p7cmkaUUfUwptqrkFdmkVJ0xw6TYiOIOBg0qYoBaZFs"
   },
   "preferences": {
-    "url": "http://localhost:9092/api/v1/users",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1dWlkIjoiMzI2ZDQxOTgtNjY3OS00MTA5LTliNzktNDQxZmM2OTgzMDVlIiwicHJlZmVyZW5jZV9zZXJ2aWNlX25hbWUiOiJlbWFpbGNvbnN1bWVyIiwiZXhwIjoyNTM0MDIyMTA4MDAsImlhdCI6MTUxOTgyMjcwNCwiYXBwbGljYXRpb25zIjp7Im1iIjpbImVucXVldWUiLCJkZXF1ZXVlIl0sInByZWZlcmVuY2VzIjpbInJlYWQiLCJ3cml0ZSIsImFkbWluIl0sIm1leCI6WyJyZWFkIiwid3JpdGUiLCJhZG1pbiJdfX0.p7cmkaUUfUwptqrkFdmkVJ0xw6TYiOIOBg0qYoBaZFs"
+    "url": "http://localhost:9092/api/v2",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1dWlkIjoiMzI2ZDQxOTgtNjY3OS00MTA5LTliNzktNDQxZmM2OTgzMDVlIiwicHJlZmVyZW5jZV9zZXJ2aWNlX25hbWUiOiJlbWFpbGNvbnN1bWVyIiwiZXhwIjoyNTM0MDIyMTA4MDAsImlhdCI6MTUxOTgyMjcwNCwiYXBwbGljYXRpb25zIjp7Im1iIjpbImVucXVldWUiLCJkZXF1ZXVlIl0sInByZWZlcmVuY2VzIjpbInJlYWQiLCJ3cml0ZSIsImFkbWluIl0sIm1leCI6WyJyZWFkIiwid3JpdGUiLCJhZG1pbiJdfX0.p7cmkaUUfUwptqrkFdmkVJ0xw6TYiOIOBg0qYoBaZFs",
+    "basicauth": {
+      "username": "admin",
+      "password": "admin"
+    }
   },
   "email_server": {
-    "host": "mailfarm-app.csi.it",
+    "host": "localhost",
     "port": 25
+  },
+  "authenticated_email_server": {
+    "host": "localhost",
+    "port": 587
   }
 }
