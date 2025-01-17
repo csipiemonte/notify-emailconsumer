@@ -39,7 +39,7 @@ I principali attributi presenti nei file di configurazione sono elencati di segu
 * `mb`: contiene la configurazione per il Message Broker.
     * `queues`: contiene le informazioni per le code del message broker
         * `events`: url della coda su cui scrivere gli eventi
-        * `retry`: url della coda di retry degli eventi non correttamente inseriti su db
+        * `retry`: url della coda di retry delle email che non ha riuscito ad inviare
         * `messages`: url della coda su cui leggere i messaggi da inviare
         * `keys`: url della coda da cui recuperare i template email
     * `token`: il token auth per chiamare il message broker
@@ -56,7 +56,7 @@ Avviare emailconsumer
 cd src && node emailconsumer.js
 ```
 
-or
+oppure
 
 ```
 npm start
