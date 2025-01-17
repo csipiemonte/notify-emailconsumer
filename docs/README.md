@@ -33,9 +33,13 @@ I principali attributi presenti nei file di configurazione sono elencati di segu
 * `email_server`: contiene le configurazioni email
     * `host`: host del server smtp
     * `port`: porta del server smtp
+* `authenticated_email_server`: contiene le configurazioni del server email autenticato
+    * `host`: host del server smtp
+    * `port`: porta del server smtp
 * `mb`: contiene la configurazione per il Message Broker.
     * `queues`: contiene le informazioni per le code del message broker
         * `events`: url della coda su cui scrivere gli eventi
+        * `retry`: url della coda di retry degli eventi non correttamente inseriti su db
         * `messages`: url della coda su cui leggere i messaggi da inviare
         * `keys`: url della coda da cui recuperare i template email
     * `token`: il token auth per chiamare il message broker
@@ -43,6 +47,7 @@ I principali attributi presenti nei file di configurazione sono elencati di segu
     * `url`: url del servizio delle preferenze
     * `token`: token per invocare il servizio delle preferenze
 * `log4js`: la configurazione di log4js (vedi https://www.npmjs.com/package/log4js)
+* `defaulttenant`: tenant di default
 
 # Running
 
